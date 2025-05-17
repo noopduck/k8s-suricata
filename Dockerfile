@@ -5,6 +5,7 @@ LABEL description="Suricata built from source with libpcap, libnet, and other de
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
+ENV LIBNG_VERSION=0.8.5
 ENV SURICATA_VERSION=7.0.10
 
 # Install build dependencies
@@ -17,7 +18,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   libnet1-dev \
   libyaml-dev \
   zlib1g-dev \
-  libcap-ng-dev \
   libmagic-dev \
   libjansson-dev \
   libpcre2-dev \
@@ -35,6 +35,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Download and build Suricata
 WORKDIR /opt
 
+RUN curl -LO https://people.redhat.com/sgrubb/libcap-ng/libcap-ng-${LIBNG_VERSION}.tar.gz && \
+  tar -xvzf libcap-ng-${LIBNG_VERSION}.tar.gz && \
+  cd libcap-ng-${LIBNG_VERSION} && \
+  ./configure && \
+  make -j "$(nproc)" && \
+  make install && \
+  cd ..
+
+
 RUN curl -LO https://www.openinfosecfoundation.org/download/suricata-${SURICATA_VERSION}.tar.gz && \
   tar -xvzf suricata-${SURICATA_VERSION}.tar.gz && \
   cd suricata-${SURICATA_VERSION} && \
@@ -46,6 +55,8 @@ RUN curl -LO https://www.openinfosecfoundation.org/download/suricata-${SURICATA_
 # Clean up source
 RUN rm -rf /opt/suricata-${SURICATA_VERSION} /opt/suricata-${SURICATA_VERSION}.tar.gz
 
+RUN adduser suricata
+
 # Create volumes for configuration, logs, and rules
 VOLUME ["/usr/local/etc/suricata", "/usr/local/var/log/suricata", "/usr/local/var/lib/suricata"]
 
@@ -54,6 +65,10 @@ VOLUME ["/usr/local/etc/suricata", "/usr/local/var/log/suricata", "/usr/local/va
 
 CMD ["/usr/local/bin/suricata-update"]
 
+COPY entrypoint.sh /opt/
+
+RUN chmod +x /opt/entrypoint.sh
+
 # Default command
-ENTRYPOINT ["/usr/local/bin/suricata", "-c", "/usr/local/etc/suricata/suricata.yaml", "-i", "eth0"]
+ENTRYPOINT [ "./opt/entrypoint.sh" ]
 
