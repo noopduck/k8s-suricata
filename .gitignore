@@ -1,5 +1,3 @@
-var-lib/data
-var-lib/rules
-var-lib/update
+var-lib/suricata/*
 var-log/*.log
 var-log/*.json
