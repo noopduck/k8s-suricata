@@ -10,8 +10,11 @@ docker container stop suricata
 yes | docker container rm suricata
 
 # Run the container with proper capabilities and network access
-docker run --rm -it \
+docker run -d \
   --name suricata \
+  --cap-add=SETUID \
+  --cap-add=SETGID \
+  --cap-add=SETPCAP \
   --cap-add=NET_ADMIN \
   --cap-add=NET_RAW \
   --cap-add=SYS_NICE \

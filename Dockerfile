@@ -63,12 +63,10 @@ VOLUME ["/usr/local/etc/suricata", "/usr/local/var/log/suricata", "/usr/local/va
 # Expose the default Suricata stats and log ports (if used)
 #EXPOSE 514 2055 6055 10000
 
-CMD ["/usr/local/bin/suricata-update"]
-
-COPY entrypoint.sh /opt/
+COPY ./entrypoint.sh /opt/entrypoint.sh
 
 RUN chmod +x /opt/entrypoint.sh
 
 # Default command
-ENTRYPOINT [ "./opt/entrypoint.sh" ]
+ENTRYPOINT [ "/opt/entrypoint.sh" ]
 
