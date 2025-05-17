@@ -26,13 +26,17 @@ docker build -t suricata .
 
 ### Running Suricata
 
-To run Suricata using the built Docker image:
+To run Suricata using the built Docker image, you can use the provided `run.sh` script, which sets up the necessary volumes and capabilities:
 
 ```bash
-docker run --rm -v /path/to/config:/usr/local/etc/suricata -v /path/to/logs:/usr/local/var/log/suricata -v /path/to/rules:/usr/local/var/lib/suricata suricata
+./run.sh
 ```
 
-Replace `/path/to/config`, `/path/to/logs`, and `/path/to/rules` with the paths to your Suricata configuration, logs, and rules directories, respectively.
+This script will:
+
+- Create necessary directories for configuration, logs, and rules if they don't exist.
+- Extract rules data from Suricata to allow the engine to start.
+- Run the container with the required capabilities and network access.
 
 ### Environment Variables
 
@@ -42,9 +46,9 @@ Replace `/path/to/config`, `/path/to/logs`, and `/path/to/rules` with the paths 
 
 ### Volumes
 
-- `/usr/local/etc/suricata`: Configuration files
-- `/usr/local/var/log/suricata`: Log files
-- `/usr/local/var/lib/suricata`: Rule files
+- `./etc-suricata:/usr/local/etc/suricata`: Configuration files
+- `./var-log:/usr/local/var/log/suricata`: Log files
+- `./var-lib:/usr/local/var/lib/suricata`: Rule files
 
 ### Exposed Ports
 
