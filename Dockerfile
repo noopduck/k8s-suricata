@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   libpcap-dev \
   libnet1-dev \
   libyaml-dev \
+  libbpf-dev \
   zlib1g-dev \
   libmagic-dev \
   libjansson-dev \
@@ -47,7 +48,7 @@ RUN curl -LO https://people.redhat.com/sgrubb/libcap-ng/libcap-ng-${LIBNG_VERSIO
 RUN curl -LO https://www.openinfosecfoundation.org/download/suricata-${SURICATA_VERSION}.tar.gz && \
   tar -xvzf suricata-${SURICATA_VERSION}.tar.gz && \
   cd suricata-${SURICATA_VERSION} && \
-  ./configure && \
+  ./configure --enable-ebpf --enable-ebpf-build && \
   make -j"$(nproc)" && \
   make install-full && \
   ldconfig
